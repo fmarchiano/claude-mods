@@ -1,0 +1,257 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap');
+
+:root {
+  --ink: #16181a;
+  --secondary: #3a3e43;
+  --muted: #8c9197;
+  --rule: #d8dadd;
+  --table-border: #e3e5e7;
+  --border: #c4c7ca;
+  --fill: #f4f5f6;
+  --fill-soft: #f8f9fa;
+  --page-surround: #eceeef;
+}
+
+@page {
+  size: A4;
+  /* 0.75in print margin + 0.7in header/footer reserve, top and bottom */
+  margin: 1.45in 0.75in;
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: .08em;
+    color: #8c9197;
+  }
+}
+
+html { background: var(--page-surround); }
+
+* { box-sizing: border-box; }
+
+body {
+  counter-reset: section;
+  max-width: 8.27in;
+  margin: 0 auto;
+  background: #fff;
+  color: var(--ink);
+  font-family: 'Source Serif 4', serif;
+  font-size: 14.5px;
+  line-height: 1.62;
+}
+
+@media print {
+  html, body { background: #fff; max-width: none; margin: 0; }
+}
+
+p, li, blockquote { font-family: 'Source Serif 4', serif; font-size: 14.5px; line-height: 1.62; color: var(--ink); }
+strong { color: var(--ink); }
+a { color: var(--ink); }
+
+/* Masthead */
+.masthead {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: .5em;
+  margin-bottom: 1.2em;
+}
+.masthead .wordmark {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.masthead .doctype {
+  font-family: 'Jost', sans-serif;
+  font-weight: 500;
+  font-size: 10.5px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+h1.doc-title {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 27px;
+  color: var(--ink);
+  margin: 0 0 1em;
+}
+
+/* Meta block: two-column definition grid */
+dl.meta {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1.5em;
+  row-gap: .4em;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 1.2em;
+  margin: 0 0 2em;
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+}
+dl.meta dt {
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+dl.meta dd { margin: 0; color: var(--secondary); }
+
+/* Numbered H2 sections */
+h1 {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 27px;
+  color: var(--ink);
+}
+h2 {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: .35em;
+  margin-top: 2em;
+  margin-bottom: 1em;
+  counter-increment: section;
+}
+h2::before {
+  content: counter(section, decimal-leading-zero) "  ";
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--muted);
+}
+h3 {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 12.5px;
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  color: var(--secondary);
+  margin-top: 1.6em;
+}
+
+/* Labels / kickers */
+.kicker, .label {
+  font-family: 'Jost', sans-serif;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  color: var(--muted);
+}
+
+/* Tables */
+td, th, td code { overflow-wrap: anywhere; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Jost', sans-serif;
+  font-size: 11.5px;
+  font-variant-numeric: tabular-nums;
+  margin: 1em 0;
+}
+caption {
+  font-family: 'Jost', sans-serif;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  text-align: left;
+  margin-bottom: .5em;
+}
+thead th {
+  background: var(--fill);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1.5px solid var(--ink);
+  padding: .5em .6em;
+  color: var(--secondary);
+}
+tbody td, tbody th {
+  border-bottom: 1px solid var(--table-border);
+  padding: .5em .6em;
+  color: var(--secondary);
+  font-weight: 400;
+  text-align: left;
+}
+
+/* Opt-in: wrap a table in a `leads` fenced div to tint its first row */
+.leads table tbody tr:first-child td,
+.leads table tbody tr:first-child th {
+  background: var(--fill-soft);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* Callout: `::: callout` fenced div, first bold line is the uppercase label */
+.callout {
+  background: var(--fill-soft);
+  border-left: 3px solid var(--ink);
+  padding: .9em 1.2em;
+  margin: 1.5em 0;
+}
+.callout p:first-child strong:first-child {
+  display: block;
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--ink);
+  margin-bottom: .4em;
+}
+
+/* Status vocabulary: [Confirmed]{.status-confirmed} / [Open]{.status-open} */
+.status-confirmed {
+  font-family: 'Jost', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: .05em;
+  color: var(--ink);
+}
+.status-confirmed::before { content: "\2713  "; }
+.status-open {
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  padding: .1em .5em;
+}
+.status-open::before { content: "\2691  "; }
+
+/* Tags: [Lead]{.tag-lead} / [Reserve]{.tag-reserve} */
+.tag-lead, .tag-reserve {
+  font-family: 'Jost', sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: .15em .6em;
+  border-radius: 2px;
+}
+.tag-lead { background: var(--ink); color: #fff; }
+.tag-reserve { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+
+/* Diagrams (mermaid, rendered to SVG) */
+.mermaid-diagram { margin: 1.6em 0; text-align: center; }
+.mermaid-diagram { break-inside: avoid; }
+.mermaid-diagram img { max-width: 100%; max-height: 17cm; object-fit: contain; }
+
+code, pre {
+  font-family: 'SFMono-Regular', Consolas, monospace;
+  font-size: 12.5px;
+}
+pre {
+  background: var(--fill);
+  border: 1px solid var(--table-border);
+  padding: .8em 1em;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="$if(lang)$$lang$$else$en$endif$">
+<head>
+<meta charset="utf-8" />
+<title>$pagetitle$</title>
+$for(css)$
+<link rel="stylesheet" href="$css$" />
+$endfor$
+</head>
+<body>
+<div class="masthead">
+  <span class="wordmark">SeCore</span>
+  $if(doctype)$<span class="doctype">$doctype$</span>$endif$
+</div>
+$if(title)$<h1 class="doc-title">$title$</h1>$endif$
+$if(meta)$
+<dl class="meta">
+$for(meta)$
+  <dt>$meta.key$</dt><dd>$meta.value$</dd>
+$endfor$
+</dl>
+$endif$
+$body$
+</body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "name": "fab-mods",
+  "owner": { "name": "Fabio Marchiano" },
+  "plugins": [
+    { "name": "statusbar", "source": "./mods/statusbar", "description": "Status line with a context bar and a prompt-cache countdown" },
+    { "name": "fab-skills", "source": "./plugins/fab-skills", "description": "Personal skills: md_to_pdf, to_tablet" }
+  ]
+}
