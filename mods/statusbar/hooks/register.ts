@@ -94,6 +94,12 @@ export const register: Register = on => {
     return result
   })
 
+  // /clear ends the conversation without a new session.start: its cache entry is no longer ours to count
+  on('session.end', async ($, e, next) => {
+    lastResponseAt = undefined
+    return next(e)
+  })
+
   on('prompt.submit', async ($, e, next) => {
     if (e.origin?.kind === 'composer' || e.origin?.kind === 'bridge') isArmed = true
     return next(e)
