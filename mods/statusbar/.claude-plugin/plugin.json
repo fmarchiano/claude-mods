@@ -1,15 +1,6 @@
 {
   "name": "statusbar",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "license": "MIT",
-  "description": "Status line with a context bar (150k soft limit, 300k scale) and a prompt-cache countdown",
-  "userConfig": {
-    "cacheTtl": {
-      "type": "string",
-      "title": "Prompt cache TTL",
-      "description": "How long the prompt cache lives after a response",
-      "default": "1h",
-      "options": ["1h", "5m"]
-    }
-  }
+  "description": "Status line with a context bar and a 1h prompt-cache countdown; hands the session off before the cache lapses"
 }
