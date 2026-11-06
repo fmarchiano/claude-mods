@@ -1,6 +1,6 @@
 ---
 name: to_tablet
-description: "Copy one or more existing PDF files to the Galaxy tablet (Termux sshd over Tailscale) under Documents/Secore, with a media scan so they show in Android's file browser. Trigger: user asks to copy/send/push a PDF to the tablet, or /to_tablet."
+description: "Copy one or more existing PDF files to the Galaxy tablet (Termux sshd over Tailscale) into a folder under Documents chosen by the user, with a media scan so they show in Android's file browser. Trigger: user asks to copy/send/push a PDF to the tablet, or /to_tablet."
 ---
 
 # /to_tablet
@@ -20,7 +20,7 @@ Runs `scripts/push.sh`, which for each PDF:
 1. Appends the creation date and hour to the name as `_YYYY-MM-DD_HHMM` (taken
    from the file's modification time), unless the name already ends with one.
    `report.pdf` is sent as `report_2026-10-21_1430.pdf`.
-2. `scp` it into each chosen folder under `/storage/emulated/0/Documents/Secore/`.
+2. `scp` it into each chosen folder under `/storage/emulated/0/Documents/`.
 3. Triggers the Android media scanner for that file.
 
 No local copy is made; the source file is left untouched.
@@ -28,14 +28,20 @@ No local copy is made; the source file is left untouched.
 ### Choosing the destination folder (required before copying)
 
 Before running the script, Claude must:
-1. List the subfolders:
-   `ssh -p 8022 u0_a134@100.94.60.70 'ls -d /storage/emulated/0/Documents/Secore/*/'`
-2. Ask the user with AskUserQuestion (multiSelect: true) which folder(s) to copy to,
-   with one option per subfolder found (plus "Secore root" for the top level).
-3. Run the script with `TABLET_SUBDIRS` set to the chosen names, space-separated
-   (e.g. `TABLET_SUBDIRS="Canine Feline"`). Leave it empty for the root only.
+1. List the folders in Documents:
+   `ssh -p 8022 u0_a134@100.94.60.70 'ls -d /storage/emulated/0/Documents/*/'`
+2. Ask the user with AskUserQuestion (multiSelect: true) which Documents folder(s)
+   to copy to, with one option per folder found. AskUserQuestion takes at most 4
+   options: if there are more, offer the most likely ones (by the PDF's topic)
+   and let the user type any other name through "Other".
+3. If a chosen folder has subfolders (`ls -d <folder>/*/`), ask once more which
+   subfolder(s), with "<folder> itself" as one option.
+4. Run the script with `TABLET_SUBDIRS` set to the chosen paths relative to
+   Documents, space-separated (e.g. `TABLET_SUBDIRS="allovista Secore/Canine"`).
+   Leave it empty for Documents itself.
 
-Multiple selections copy the same PDF into each folder.
+Multiple selections copy the same PDF into each folder. A folder name the user
+types that does not exist yet is created.
 
 ### After the copy: settle the open decisions (required when the PDF has a Markdown source)
 
@@ -65,7 +71,7 @@ If the document has no open decisions, say so in one line and skip the questions
 ## Invocation
 
 ```bash
-TABLET_SUBDIRS="Canine" bash <this skill's base directory>/scripts/push.sh <file1.pdf> [file2.pdf ...]
+TABLET_SUBDIRS="allovista Secore/Canine" bash <this skill's base directory>/scripts/push.sh <file1.pdf> [file2.pdf ...]
 ```
 
 Override `TABLET_HOST`, `TABLET_PORT` or `TABLET_DIR` via env if the tablet address changes.

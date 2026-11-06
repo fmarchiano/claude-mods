@@ -4,8 +4,8 @@ set -euo pipefail
 # Galaxy tablet over Tailscale (Termux sshd). Same target as md_to_pdf.
 TABLET_HOST="${TABLET_HOST:-u0_a134@100.94.60.70}"
 TABLET_PORT="${TABLET_PORT:-8022}"
-TABLET_DIR="${TABLET_DIR:-/storage/emulated/0/Documents/Secore}"
-# Space-separated subfolder names under TABLET_DIR (e.g. "Canine Feline"); empty = TABLET_DIR itself.
+TABLET_DIR="${TABLET_DIR:-/storage/emulated/0/Documents}"
+# Space-separated folder paths under TABLET_DIR (e.g. "allovista Secore/Canine"); empty = TABLET_DIR itself.
 TABLET_SUBDIRS="${TABLET_SUBDIRS:-}"
 SSH_OPTS=(-p "$TABLET_PORT" -o StrictHostKeyChecking=accept-new)
 
