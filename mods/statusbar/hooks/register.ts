@@ -5,8 +5,8 @@ const LIMIT = 150_000
 const CTX_WIDTH = 20
 const CACHE_WIDTH = 10
 const TTL_MS = 60 * 60_000
-// How long before the cache lapses the handoff starts, so it is written on a warm cache
-const HANDOFF_LEAD_MS = 10 * 60_000
+// How long before the cache lapses the handoff fires, so it is written on a warm cache
+const HANDOFF_LEAD_MS = 5 * 60_000
 
 export const contextBar = (tokens: number): string => {
   const filled = Math.min(CTX_WIDTH, Math.floor((tokens * CTX_WIDTH) / SCALE))
@@ -28,8 +28,8 @@ export const cacheBar = (leftMs: number, ttlMs: number): string => {
   return `cache ${'█'.repeat(filled)}${'░'.repeat(CACHE_WIDTH - filled)} ${time}`
 }
 
-// True once the idle session is inside the lead window of a cache that is still warm
-export const isHandoffDue = (leftMs: number): boolean => leftMs > 0 && leftMs <= HANDOFF_LEAD_MS
+export const isHandoffDue = (leftMs: number, tokens: number): boolean =>
+  leftMs > 0 && leftMs <= HANDOFF_LEAD_MS && tokens >= 30_000
 
 export const handoffPrompt = (path: string): string =>
   `The prompt cache is about to expire. Write a handoff document summarising this conversation so a fresh session can continue the work. ` +
@@ -40,32 +40,37 @@ let lastResponseAt: number | undefined
 let model = ''
 let effort = ''
 let isBusy = false
-// Disarmed after a handoff until the person speaks again, so an unattended session hands off once
-let isArmed = true
 let handoffPath: string | undefined
+let handoffFired = false
+let lastContextTokens = 0
 
 async function refresh($: EngineInterface) {
   const { context } = await $.session.usage()
+  lastContextTokens = context.tokens ?? 0
   const parts = [model || (await $.session.model())]
   if (effort) parts.push(`effort:${effort}`)
-  if (context.tokens !== undefined) parts.push(contextBar(context.tokens))
+  if (lastContextTokens) parts.push(contextBar(lastContextTokens))
   if (lastResponseAt !== undefined) {
     const left = lastResponseAt + TTL_MS - (await $.clock.now())
-    parts.push(handoffPath ? 'handoff: writing…' : cacheBar(left, TTL_MS))
-    if (isArmed && !isBusy && handoffPath === undefined && isHandoffDue(left)) await startHandoff($)
+    if (handoffPath) {
+      parts.push('handoff: writing…')
+    } else {
+      parts.push(cacheBar(left, TTL_MS))
+    }
+    if (!handoffFired && !isBusy && !handoffPath && isHandoffDue(left, lastContextTokens)) {
+      await startHandoff($)
+    }
   }
   $.ui.status(parts.join(' | '))
 }
 
 async function startHandoff($: EngineInterface) {
-  isArmed = false
+  handoffFired = true
   handoffPath = `/tmp/claude-handoff-${await $.session.id()}.md`
-  const commands = await $.command.list()
-  const handoff = commands.find(c => c.name === 'mattpocock-skills:handoff') ?? commands.find(c => c.name.endsWith(':handoff') || c.name === 'handoff')
-  if (handoff) {
-    await $.command.run({ command: handoff.name, args: `Next session: continue this work. Save the document at exactly ${handoffPath}.` })
-  } else {
+  try {
     await $.prompt.submit({ text: handoffPrompt(handoffPath) })
+  } catch {
+    await $.prompt.fill({ text: handoffPrompt(handoffPath), mode: 'replace' })
   }
 }
 
@@ -94,14 +99,14 @@ export const register: Register = on => {
     return result
   })
 
-  // /clear ends the conversation without a new session.start: its cache entry is no longer ours to count
   on('session.end', async ($, e, next) => {
     lastResponseAt = undefined
     return next(e)
   })
 
   on('prompt.submit', async ($, e, next) => {
-    if (e.origin?.kind === 'composer' || e.origin?.kind === 'bridge') isArmed = true
+    // User spoke — re-arm for the next idle stretch
+    if (e.origin?.kind === 'composer' || e.origin?.kind === 'bridge') handoffFired = false
     return next(e)
   })
 
@@ -119,7 +124,6 @@ export const register: Register = on => {
     return result
   })
 
-  // Main-thread responses only: a subagent's request does not touch the main cache entry
   on('turn.step', async function* ($, e, next) {
     const result = yield* next(e)
     if (e.agentId === undefined && result.usage !== null) {
