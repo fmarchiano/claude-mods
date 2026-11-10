@@ -6,7 +6,7 @@ const CTX_WIDTH = 20
 const CACHE_WIDTH = 10
 const TTL_MS = 60 * 60_000
 // How long before the cache lapses the handoff starts, so it is written on a warm cache
-const HANDOFF_LEAD_MS = 5 * 60_000
+const HANDOFF_LEAD_MS = 10 * 60_000
 
 export const contextBar = (tokens: number): string => {
   const filled = Math.min(CTX_WIDTH, Math.floor((tokens * CTX_WIDTH) / SCALE))

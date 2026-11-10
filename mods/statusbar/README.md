@@ -11,7 +11,7 @@ Opus | effort:high | 🟢 ctx ████░░░░░░░░░░░|░�
 
 ## Handoff before the cache lapses
 
-When the session has sat idle until 5 minutes are left on the cache, the mod runs Matt Pocock's `handoff` skill (from `mattpocock-skills`; a built-in prompt with the same instructions when that plugin is missing) while the cache is still warm. The document is saved to `/tmp/claude-handoff-<session id>.md`. Once it is written the mod runs `/clear` and fills the prompt with `Read the handoff at <path> and continue from it.`, so pressing Enter continues in a fresh, cheap session. `/resume` brings the old conversation back.
+When the session has sat idle until 10 minutes are left on the cache, the mod runs Matt Pocock's `handoff` skill (from `mattpocock-skills`; a built-in prompt with the same instructions when that plugin is missing) while the cache is still warm. The document is saved to `/tmp/claude-handoff-<session id>.md`. Once it is written the mod runs `/clear` and fills the prompt with `Read the handoff at <path> and continue from it.`, so pressing Enter continues in a fresh, cheap session. `/resume` brings the old conversation back.
 
 It hands off once per idle stretch: it waits for your next message before it can fire again.
 
