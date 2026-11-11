@@ -5,7 +5,9 @@ description: "Summarize a scientific paper PDF into a graphical abstract PDF: ci
 
 # Paper Summary
 
-Produce a one-page graphical abstract PDF from a scientific paper PDF.
+Produce a short graphical abstract PDF from a scientific paper PDF: typically 1 to 3 pages,
+depending on how many stages the paper's pipeline has. Do not pad to fill a page, and do not
+drop real method detail just to save one.
 
 ## Input
 
