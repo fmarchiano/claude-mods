@@ -1,6 +1,6 @@
 ---
 name: paper-summary
-description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, synthesized background, Mermaid methods flow diagram, key finding. Runs in the `science` conda env, created automatically if missing. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
+description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, a background split into Problem / Approach / Solution, Mermaid methods flow diagram, key finding. Runs in the `science` conda env, created automatically if missing. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
 ---
 
 # Paper Summary
@@ -43,11 +43,14 @@ python -c "import fitz,sys; d=fitz.open(sys.argv[1]); print(chr(12).join(p.get_t
 ### 1. Read the paper strategically
 
 Use the Read tool on the PDF. Read in page-range chunks (max 20 pages per call).
-Target these sections only — skip detailed results and references:
+Target these sections, skipping only the references:
 
 - **First 3 pages**: title, authors, journal, DOI, abstract, start of introduction.
-- **Introduction** (remaining pages if it continues).
-- **Methods / Materials and Methods**: read fully — this is the core output.
+- **Introduction** (remaining pages if it continues) — this gives you **Problem**.
+- **Results**: read for the headline numbers, the ones the Solution paragraph will
+  quote (yields, accuracy, precision, affinities, effect sizes). Skim the
+  figure-by-figure detail, but do not skip the section: Solution is the results.
+- **Methods / Materials and Methods**: read fully — this drives the diagram.
 - **Discussion / Conclusion**: read fully.
 
 Identify page ranges from the table of contents or section headers in the first read.
@@ -75,9 +78,19 @@ meta:
 
 ## Background
 
-<Single synthesized paragraph. Open with the problem and gap the paper addresses
-(from introduction). Close with what the authors found or concluded (from
-discussion/conclusion). 4–8 sentences. No jargon the abstract doesn't use.>
+**Problem.** <The question the paper sets out to answer and why it was still open:
+what people needed to know, and what the existing methods or results could not give
+them. From the introduction. 2–4 sentences.>
+
+**Approach.** <How the authors went after that question: the idea or insight the work
+turns on, stated at the level of strategy, not protocol. The step-by-step belongs in
+the Methods diagram below, so do not repeat kits or reagents here. 1–3 sentences.>
+
+**Solution.** <The results: what they actually found out. Report the findings with
+the numbers that matter (yields, accuracy, precision, affinities, effect sizes),
+taken from the results section. Facts first, not implications: state what the data
+showed, and only then, if it is needed, one short clause on what it means. 2–4
+sentences.>
 
 ## Methods
 
@@ -111,6 +124,22 @@ Use a definition list:>
 **Key Finding.** <One sentence: the single most important result or conclusion.>
 :::
 ```
+
+### The three Background paragraphs
+
+Background is always three labelled paragraphs, in this order, with these exact
+bold labels: **Problem.**, **Approach.**, **Solution.** They answer, in turn:
+
+1. **Problem** — what question needed answering, and why it was still open.
+2. **Approach** — how the authors went about answering it.
+3. **Solution** — the results: what they found out.
+
+Never merge them into a single block of prose, never reorder them, and never drop
+one because the paper buries it. Keep the whole section under ~12 sentences, and
+use no jargon the abstract doesn't use. If the paper only partly answers its own
+question, say so in the Solution rather than writing it as settled.
+
+### The Methods diagram
 
 Adapt the Mermaid node count to the actual pipeline — more nodes if the paper
 has more wet-lab or bioinformatics stages, fewer if it's simpler. The five-node
