@@ -6,13 +6,10 @@ set -euo pipefail
 SKILL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ $# -gt 0 ] || { echo "usage: convert.sh <file.md> [...]" >&2; exit 2; }
 
-# conda is not on PATH by default; fall back to the known miniforge install
-CONDA_BASE="${CONDA_BASE:-$(conda info --base 2>/dev/null || echo /home/fab/miniforge3)}"
-source "$CONDA_BASE/etc/profile.d/conda.sh"
-conda activate secore
-
-command -v pandoc >/dev/null || conda install -y -c conda-forge pandoc
-python -c "import weasyprint" 2>/dev/null || conda install -y -c conda-forge weasyprint
+# Activate the `science` env, creating it on first run. Discovers conda at runtime,
+# so there are no machine-specific paths here.
+# shellcheck disable=SC1091
+source "$SKILL_DIR/../../scripts/ensure_env.sh"
 
 for md in "$@"; do
   out="${md%.md}.pdf"

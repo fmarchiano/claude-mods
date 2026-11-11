@@ -1,6 +1,6 @@
 ---
 name: paper-summary
-description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, synthesized background, Mermaid methods flow diagram, key finding. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
+description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, synthesized background, Mermaid methods flow diagram, key finding. Runs in the `science` conda env, created automatically if missing. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
 ---
 
 # Paper Summary
@@ -12,6 +12,31 @@ Produce a one-page graphical abstract PDF from a scientific paper PDF.
 A file path to a PDF. If the user doesn't provide one, ask for it.
 
 ## Steps
+
+### 0. Make the `science` env available
+
+All tooling for this skill lives in the `science` conda env. Activate it, creating it
+if this machine does not have it (first run only, several minutes):
+
+```bash
+source "<this skill's base directory>/../../scripts/ensure_env.sh"
+```
+
+That script finds conda at runtime, so it works unchanged on any machine. The env
+provides `poppler` (`pdftoppm`/`pdftotext`, which the Read tool needs to open PDFs)
+and `pymupdf`. Put its `bin` on PATH before reading a PDF:
+
+```bash
+export PATH="$CONDA_PREFIX/bin:$PATH"
+```
+
+Without `pdftoppm` the Read tool fails on PDFs with
+`pdftoppm is not installed`. If the env cannot be created (no network), fall back to
+text extraction and say so in your report rather than silently degrading:
+
+```bash
+python -c "import fitz,sys; d=fitz.open(sys.argv[1]); print(chr(12).join(p.get_text() for p in d))" paper.pdf
+```
 
 ### 1. Read the paper strategically
 

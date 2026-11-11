@@ -1,6 +1,6 @@
 ---
 name: md_to_pdf
-description: "Convert one or more Markdown files to PDF using pandoc + weasyprint in the secore conda env, styled with the SeCore house style (Jost/Source Serif 4, monochrome, numbered sections, masthead). Trigger: user asks to convert markdown to PDF, export .md as PDF, or /md_to_pdf."
+description: "Convert one or more Markdown files to PDF using pandoc + weasyprint in the `science` conda env (created automatically if missing), styled with the SeCore house style (Jost/Source Serif 4, monochrome, numbered sections, masthead). Trigger: user asks to convert markdown to PDF, export .md as PDF, or /md_to_pdf."
 ---
 
 # /md_to_pdf
@@ -17,8 +17,11 @@ ink-on-white, Jost for structure, Source Serif 4 for prose.
 ## What it does
 
 Runs `scripts/convert.sh` which, per file:
-1. Activates conda env `secore` (per project convention).
-2. Ensures `pandoc` and `weasyprint` are installed (conda-forge, no LaTeX needed).
+1. Activates conda env `science` via `scripts/ensure_env.sh`, **creating that env from
+   conda-forge if the machine does not have it yet** (first run only). Conda itself is
+   discovered at runtime, so no path is hardcoded to any one machine.
+2. The env carries `pandoc` and `weasyprint` (no LaTeX needed), plus `poppler` and
+   `pymupdf` for the PDF-reading skills.
 3. Pre-renders any ` ```mermaid ` fenced blocks to SVG via `scripts/render_mermaid.py`
    (uses kroki.io, needs network; cached under `<name>_diagrams/`).
 4. Runs pandoc with `assets/template.html` (masthead + meta block) and
