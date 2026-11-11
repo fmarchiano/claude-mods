@@ -95,7 +95,8 @@ sentences.>
 
 ## Methods
 
-![<Short alt text describing the scene>](<original_stem>_figure.jpg)
+![<One short sentence naming what the scene shows. This prints as the visible
+caption under the figure, so keep it to one line, not a list of every object.>](<original_stem>_figure.jpg)
 
 <One sentence per stage of the scene explaining the specific technique, kit, or
 tool used. Use a definition list:>

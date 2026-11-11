@@ -246,6 +246,20 @@ tbody td, tbody th {
 .mermaid-diagram { break-inside: avoid; }
 .mermaid-diagram img { max-width: 100%; max-height: 17cm; object-fit: contain; }
 
+/* Any other image, e.g. a generated graphical abstract. Without this a wide
+   source image (BioRender exports are ~2750px) overflows the text column and
+   pushes itself onto the next page, leaving most of a page blank. */
+img {
+  max-width: 100%;
+  max-height: 11cm;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: 1.4em auto;
+}
+/* Pandoc wraps a lone image in its own paragraph; keep it with its caption. */
+p > img:only-child { break-inside: avoid; }
+
 code, pre {
   font-family: 'SFMono-Regular', Consolas, monospace;
   font-size: 12.5px;
