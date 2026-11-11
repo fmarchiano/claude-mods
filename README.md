@@ -5,7 +5,7 @@ My Claude Code mods and skills, as one plugin marketplace so every machine gets 
 | Plugin | What it is |
 | --- | --- |
 | `statusbar` | Status line: model, effort, context bar (150k soft limit on a 300k scale), prompt-cache countdown |
-| `fab-skills` | Skills: `md_to_pdf`, `to_tablet` |
+| `fab-skills` | Skills: `md_to_pdf`, `paper_summary`, `to_tablet` |
 
 ## Install
 
