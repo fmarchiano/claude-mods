@@ -1,6 +1,6 @@
 ---
 name: paper-summary
-description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, a background split into Problem / Approach / Solution, Mermaid methods flow diagram, key finding. Runs in the `science` conda env, created automatically if missing. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
+description: "Summarize a scientific paper PDF into a graphical abstract PDF: citation header, a background split into Problem / Approach / Solution, a BioRender-drawn methods scene, key finding. Runs in the `science` conda env, created automatically if missing. Trigger: summarize paper, paper summary, graphical abstract, summarize this PDF, paper overview."
 ---
 
 # Paper Summary
@@ -50,7 +50,8 @@ Target these sections, skipping only the references:
 - **Results**: read for the headline numbers, the ones the Solution paragraph will
   quote (yields, accuracy, precision, affinities, effect sizes). Skim the
   figure-by-figure detail, but do not skip the section: Solution is the results.
-- **Methods / Materials and Methods**: read fully — this drives the diagram.
+- **Methods / Materials and Methods**: read fully — this drives both the BioRender
+  scene and the definition list under it.
 - **Discussion / Conclusion**: read fully.
 
 Identify page ranges from the table of contents or section headers in the first read.
@@ -94,30 +95,24 @@ sentences.>
 
 ## Methods
 
-` ` `mermaid
-flowchart LR
-    A["<Sample / input material>"] --> B["<Library prep technique>"]
-    B --> C["<Sequencing platform & mode>"]
-    C --> D["<Primary bioinformatics pipeline>"]
-    D --> E["<Key downstream analysis>"]
-` ` `
+![<Short alt text describing the scene>](<original_stem>_figure.jpg)
 
-<One sentence per node explaining the specific technique, kit, or tool used.
-Use a definition list:>
+<One sentence per stage of the scene explaining the specific technique, kit, or
+tool used. Use a definition list:>
 
-**<Node A label>**
+**<Stage 1 label>**
 : <detail>
 
-**<Node B label>**
+**<Stage 2 label>**
 : <detail>
 
-**<Node C label>**
+**<Stage 3 label>**
 : <detail>
 
-**<Node D label>**
+**<Stage 4 label>**
 : <detail>
 
-**<Node E label>**
+**<Stage 5 label>**
 : <detail>
 
 ::: callout
@@ -139,23 +134,67 @@ one because the paper buries it. Keep the whole section under ~12 sentences, and
 use no jargon the abstract doesn't use. If the paper only partly answers its own
 question, say so in the Solution rather than writing it as settled.
 
-### The Methods diagram
+### The Methods scene
 
-Adapt the Mermaid node count to the actual pipeline — more nodes if the paper
-has more wet-lab or bioinformatics stages, fewer if it's simpler. The five-node
-template is a starting shape, not a constraint.
+The methods are shown as one illustrated scene, not a boxed flowchart. Generate it
+with BioRender (step 3) and reference it as `<original_stem>_figure.jpg`. Keep the
+definition list under the image: the drawing carries the shape of the method, the
+list carries the reagents, kits and tools, which no illustration can show.
 
-Completion: the markdown file exists, renders valid Mermaid, and uses md_to_pdf
+Adapt the stage count to the actual pipeline — more stages if the paper has more
+wet-lab or bioinformatics steps, fewer if it is simpler. Five is a starting shape,
+not a constraint.
+
+Completion: the markdown file exists, references the figure, and uses md_to_pdf
 frontmatter.
 
-### 3. Convert to PDF
+### 3. Draw the graphical abstract with BioRender
 
-Invoke the `md_to_pdf` skill on the markdown file. It handles Mermaid rendering,
-styling, and PDF output automatically.
+Use the BioRender MCP tools. **BioRender is for converting published papers only.**
+Never send unpublished work, internal methods or anything the user has not already
+published; draw those locally instead and say so.
 
-### 4. Clean up
+1. `custom-figure-create-session` with a `prompt` describing the scene. Write the
+   prompt as a numbered left-to-right walkthrough of the pipeline, naming the
+   biological objects to draw (cell types and their receptors, droplets, transcripts,
+   enzymes, virions, sequencer) and the label text for each. End with a style line:
+   flat vector, publication quality, muted colour, generous white space, horizontal
+   layout. Describe what is in the paper, not what looks nice.
+2. Poll `custom-figure-get-preview-job` with the returned `jobId` until
+   `status` is `completed`. It takes roughly 30 to 60 seconds. Stop on `failed` or
+   `content_moderation_error` and report the error rather than retrying blindly.
+3. `custom-figure-get-session` with the `sessionId`. This returns the preview image
+   and finalizes it as a saved BioRender figure.
+4. The inline image handed back is a downscaled preview. For print, download the
+   full-resolution file from `figure.imageUrl` to `<original_stem>_figure.jpg`
+   next to the PDF:
+
+   ```bash
+   curl -sS -o "<original_stem>_figure.jpg" "<figure.imageUrl>"
+   ```
+
+   That URL is signed and expires in about 30 minutes, so download it in the same
+   session, not later. Despite the `.png` in the URL the bytes are usually JPEG;
+   name the local file `.jpg`.
+5. **Look at the generated image before using it.** It is generated art and can
+   invent structures or mislabel them. Check that every object matches the paper:
+   right cell types, right molecules, labels spelled correctly, no invented step.
+   Regenerate with a corrected prompt if it is wrong, and tell the user what was
+   wrong rather than quietly shipping it.
+
+Keep `figure.url` (the BioRender editor link) and report it, so the user can edit
+the drawing by hand afterwards.
+
+### 4. Convert to PDF
+
+Invoke the `md_to_pdf` skill on the markdown file. It handles styling and PDF
+output automatically, and embeds the figure referenced by the markdown.
+
+### 5. Clean up
 
 After the PDF is confirmed, delete the intermediate `_summary.md` and any
-`_summary_diagrams/` cache directory — the PDF is the deliverable.
+`_summary_diagrams/` cache directory — the PDF is the deliverable. **Keep
+`<original_stem>_figure.jpg`**: it is the artwork, it cannot be regenerated
+identically, and the signed BioRender URL will have expired.
 
 Then ask: keep locally, or send to tablet?
