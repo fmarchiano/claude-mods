@@ -1,6 +1,6 @@
 {
   "name": "fab-skills",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "license": "MIT",
   "description": "Personal skills: md_to_pdf (SeCore house-style PDFs) and to_tablet (push PDFs to the tablet)"
 }
