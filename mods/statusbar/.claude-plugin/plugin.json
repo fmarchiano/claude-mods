@@ -1,6 +1,6 @@
 {
   "name": "statusbar",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "license": "MIT",
   "description": "Status line with a context bar and a 1h prompt-cache countdown; hands the session off before the cache lapses"
 }

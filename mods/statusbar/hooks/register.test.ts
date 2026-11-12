@@ -16,11 +16,9 @@ test('cache bar counts down and reads expired at zero', () => {
   expect(cacheBar(0, hour)).toBe('cache ░░░░░░░░░░ expired')
 })
 
-test('handoff is due only in the last five minutes of a warm cache with enough context', () => {
-  const tokens = 50_000
-  expect(isHandoffDue(10 * 60_000, tokens)).toBe(false)
-  expect(isHandoffDue(5 * 60_000, tokens)).toBe(true)
-  expect(isHandoffDue(1_000, tokens)).toBe(true)
-  expect(isHandoffDue(0, tokens)).toBe(false)
-  expect(isHandoffDue(3 * 60_000, 10_000)).toBe(false)
+test('handoff is due only in the last ten minutes of a warm cache', () => {
+  expect(isHandoffDue(11 * 60_000)).toBe(false)
+  expect(isHandoffDue(10 * 60_000)).toBe(true)
+  expect(isHandoffDue(1_000)).toBe(true)
+  expect(isHandoffDue(0)).toBe(false)
 })
