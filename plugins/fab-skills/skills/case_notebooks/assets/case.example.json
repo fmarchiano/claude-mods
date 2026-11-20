@@ -1,0 +1,25 @@
+{
+  "case": "Winston",
+  "case_dir": "/home/fab/cases/canine/winston/tissue/1_run",
+  "tumour_label": "FFPE tumour",
+  "normal_label": "PBMC",
+  "prefix": "ffpe_vs_pbmc",
+  "tumour_id": "winston_ffpe",
+  "normal_id": "winston_pbmc",
+  "sex": "male",
+  "facets_prefix": "ffpe",
+  "facets_cvals": [150, 300],
+  "facets_doubtful": [["12", 0, 22000000], ["16", 12000000, 55000000]],
+  "gene_coords": "cnvkit/CanFam4_ens116.gene_coords.tsv",
+  "hr_germline_tsv": "hr_genes/pbmc_hr.vep.tsv",
+  "panel": {
+    "file": "hsa_megquier2019",
+    "title": "Hemangiosarcoma genes",
+    "source": "Significantly mutated (SMG) and recurrent copy-number (CNA) genes in visceral hemangiosarcoma, from Megquier et al. 2019 (Mol Cancer Res). Canine CDKN2A is annotated as part of CDKN2B in CanFam4."
+  },
+  "driver": {"gene": "TP53", "chrom": "5", "pos": 32771822, "label": "TP53 p.Lys151Ter"},
+  "example_genes": ["BCOR", "MYC", "CDKN2B"],
+  "plot_regions": [["20", null, null], ["20", 38000000, 48000000]],
+  "support_rule": {"min_alt": 5, "min_vaf": 0.05},
+  "docs": "TIERING.md"
+}
