@@ -1,0 +1,6 @@
+{
+  "name": "voice",
+  "version": "0.1.0",
+  "license": "MIT",
+  "description": "Hands-free loop: Claude's <speak> block is read aloud by a web page on whatever device has it open"
+}

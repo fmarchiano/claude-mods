@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude Voice</title>
+<style>
+  :root { --bg:#f6f5f2; --fg:#1d1d1b; --mute:#6b6a66; --accent:#c25b2a; --card:#fff; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#151514; --fg:#ecebe7; --mute:#9a9893; --accent:#e07a45; --card:#1f1f1d; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100dvh; background:var(--bg); color:var(--fg);
+         font:17px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+         padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+         display:flex; flex-direction:column; gap:16px; max-width:640px; margin-inline:auto; }
+  h1 { font-size:1.1rem; margin:0; display:flex; justify-content:space-between; align-items:center; }
+  #status { font-size:.85rem; font-weight:500; color:var(--mute); }
+  #status.live { color:var(--accent); }
+  #start { font:inherit; font-size:1.3rem; font-weight:600; padding:1.4em; border:0; border-radius:16px;
+           background:var(--accent); color:#fff; cursor:pointer; }
+  #last { background:var(--card); border-radius:16px; padding:20px; font-size:1.25rem; line-height:1.55;
+          flex:1; min-height:8em; white-space:pre-wrap; }
+  #last:empty::before { content:"Replies appear and are spoken here."; color:var(--mute); }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  select, .row button { font:inherit; font-size:.9rem; padding:.5em .7em; border-radius:10px;
+           border:1px solid var(--mute); background:var(--card); color:var(--fg); }
+  select { flex:1; min-width:0; }
+  #err { color:var(--accent); }
+</style>
+</head>
+<body>
+  <h1>Claude Voice <span id="status">idle</span></h1>
+  <p id="err" hidden></p>
+  <button id="start">Tap to start listening</button>
+  <div id="last"></div>
+  <div class="row">
+    <select id="voice" aria-label="Voice"></select>
+    <button id="test">Test</button>
+    <button id="stop">Stop</button>
+  </div>
+<script>
+const $ = id => document.getElementById(id);
+const topic = location.hash.slice(1);
+const synth = speechSynthesis;
+let voices = [], es, wakeLock;
+
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch {} },
+};
+
+function loadVoices() {
+  voices = synth.getVoices().filter(v => v.lang.startsWith('en'));
+  const saved = store.get('voice');
+  const best = voices.find(v => v.name === saved) || voices.find(v => /natural/i.test(v.name)) || voices.find(v => v.default) || voices[0];
+  $('voice').innerHTML = voices.map(v => `<option${v === best ? ' selected' : ''}>${v.name}</option>`).join('');
+}
+synth.onvoiceschanged = loadVoices;
+loadVoices();
+$('voice').onchange = e => store.set('voice', e.target.value);
+
+// Chrome cuts long utterances, so speak sentence by sentence
+function speak(text) {
+  synth.cancel();
+  const voice = voices.find(v => v.name === $('voice').value);
+  for (const s of text.match(/[^.!?]+[.!?]*\s*/g) || [text]) {
+    const u = new SpeechSynthesisUtterance(s.trim());
+    if (voice) u.voice = voice;
+    u.lang = 'en-US';
+    synth.speak(u);
+  }
+}
+
+async function keepAwake() {
+  try { wakeLock = await navigator.wakeLock?.request('screen'); } catch {}
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && es) keepAwake(); });
+
+function connect() {
+  es = new EventSource(`https://ntfy.sh/${encodeURIComponent(topic)}/sse`);
+  es.onopen = () => { $('status').textContent = 'listening'; $('status').className = 'live'; };
+  es.onerror = () => { $('status').textContent = 'reconnecting…'; $('status').className = ''; };
+  es.onmessage = e => {
+    const msg = JSON.parse(e.data).message || '';
+    if (msg === 'STOP') return synth.cancel();
+    $('last').textContent = msg;
+    speak(msg);
+  };
+}
+
+$('start').onclick = () => {
+  speak('Listening.');  // first speech must come from a tap
+  keepAwake();
+  connect();
+  $('start').hidden = true;
+};
+$('test').onclick = () => speak('This is how replies will sound.');
+$('stop').onclick = () => synth.cancel();
+
+if (!/^[A-Za-z0-9_-]{8,64}$/.test(topic)) {
+  $('err').textContent = 'No topic in the URL. Run /voice setup in Claude Code and open the link it prints.';
+  $('err').hidden = false;
+  $('start').disabled = true;
+}
+</script>
+</body>
+</html>
