@@ -1,6 +1,6 @@
 {
   "name": "fab-skills",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "license": "MIT",
-  "description": "Personal skills: md_to_pdf (SeCore house-style PDFs), paper_summary (graphical abstracts), to_tablet (push PDFs to the tablet), case_notebooks (tumour/normal exploration notebooks)"
+  "description": "Personal skills: md_to_pdf (CV-style or SeCore PDFs), paper_summary (graphical abstracts), to_tablet (push PDFs to the tablet), case_notebooks (tumour/normal exploration notebooks)"
 }

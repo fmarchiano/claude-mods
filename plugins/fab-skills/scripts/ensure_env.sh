@@ -75,12 +75,12 @@ if [ ${#_fab_missing[@]} -gt 0 ]; then
 fi
 
 # The agent's Read tool runs outside this env and looks up pdftoppm on its own PATH,
-# so activating the env is not enough to let it open PDFs. Expose just the two poppler
-# binaries it needs via ~/.local/bin (usually on PATH). Symlinks only, nothing copied,
-# and an existing pdftoppm is never overwritten.
+# so activating the env is not enough to let it open PDFs. Expose the poppler
+# binaries agents reach for (render, text, page info, fonts) via ~/.local/bin
+# (usually on PATH). Symlinks only, nothing copied, existing files never overwritten.
 _fab_bindir="$HOME/.local/bin"
 if mkdir -p "$_fab_bindir" 2>/dev/null; then
-  for _fab_bin in pdftoppm pdftotext; do
+  for _fab_bin in pdftoppm pdftotext pdfinfo pdffonts; do
     if [ ! -e "$_fab_bindir/$_fab_bin" ] && [ -x "$CONDA_PREFIX/bin/$_fab_bin" ]; then
       ln -s "$CONDA_PREFIX/bin/$_fab_bin" "$_fab_bindir/$_fab_bin" 2>/dev/null &&
         echo "ensure_env.sh: linked $_fab_bin into $_fab_bindir (for PDF reading)" >&2

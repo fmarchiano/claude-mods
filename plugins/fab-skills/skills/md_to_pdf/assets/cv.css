@@ -1,0 +1,208 @@
+/* CV house style: Jost only, ink on white with one forest-green accent.
+   Palette and type scale taken from Fabio's CV design (Claude Design project). */
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #17211d;       /* names, headings */
+  --body: #2e352f;      /* running text */
+  --secondary: #3a423b; /* list items, table cells */
+  --muted: #5c665f;     /* contacts, dates */
+  --faint: #9aa39c;     /* bullets, footnotes */
+  --accent: #1f5c4d;    /* kickers, PhD, bold lead-ins */
+  --rule: #e3e7e4;
+  --fill: #f3f5f3;
+}
+
+@page {
+  size: A4;
+  margin: 13mm 17mm 12mm;
+  @bottom-right {
+    content: counter(page) " / " counter(pages);
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: .08em;
+    color: #9aa39c;
+  }
+}
+/* single-page documents (letters) need no page counter */
+@page :first { @bottom-right { content: none; } }
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #fff;
+  color: var(--body);
+  font-family: 'Jost', 'Helvetica Neue', Arial, sans-serif;
+  font-size: 12.6px;
+  line-height: 1.42;
+}
+
+/* Masthead: name, role kicker, contact row */
+.masthead { margin-bottom: 14px; }
+.masthead h1.name {
+  font-weight: 500;
+  font-size: 34px;
+  line-height: 1.02;
+  letter-spacing: -.005em;
+  color: var(--ink);
+  margin: 0;
+}
+.acc { color: var(--accent); }
+.masthead .role {
+  margin-top: 8px;
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+.masthead .contact {
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+/* Letter block: recipient left, date right */
+.letterhead {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin: 0 0 14px;
+  font-size: 12.5px;
+  color: var(--secondary);
+}
+.letterhead .date { font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+h1.doc-title {
+  font-weight: 600;
+  font-size: 24px;
+  color: var(--ink);
+  margin: 4px 0 12px;
+}
+
+/* Kicker: letter subject line, ## sections, labels */
+.subject, h2, .kicker, .label {
+  font-size: 10.5px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+}
+.subject { margin: 0 0 12px; }
+h2 { margin: 20px 0 10px; break-after: avoid; }
+h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 14px 0 4px;
+  break-after: avoid;
+}
+h4 { font-size: 12.8px; font-weight: 600; color: var(--accent); margin: 10px 0 2px; }
+
+/* Meta block: CV skills-grid look */
+dl.meta {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 4px 12px;
+  margin: 0 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rule);
+  font-size: 12px;
+}
+dl.meta dt { color: var(--accent); font-weight: 600; }
+dl.meta dd { margin: 0; color: var(--secondary); }
+
+p { margin: 0 0 7px; text-align: justify; orphans: 3; widows: 3; }
+strong { color: var(--ink); font-weight: 600; }
+p > strong:first-child { color: var(--accent); }   /* bold lead-in = green, like CV subtitles */
+a { color: var(--accent); text-decoration: none; }
+
+/* Lists: green bar + chevrons, as in the CV's engagement cards */
+ul {
+  list-style: none;
+  margin: 0 0 9px;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--accent);
+}
+ul ul { border-left: none; padding-left: 14px; margin: 2px 0; }
+li { position: relative; padding-left: 14px; margin: 2px 0; color: var(--secondary); }
+li::before { content: "›"; position: absolute; left: 0; color: var(--faint); }
+ol { margin: 0 0 9px; padding-left: 22px; color: var(--secondary); }
+ol li { padding-left: 2px; }
+ol li::before { content: none; }
+ol li::marker { color: var(--accent); font-weight: 700; }
+
+/* Letter closing: ::: closing  →  "Kind regards,\" newline "**Name**" */
+.closing { margin-top: 10px; }
+.closing p { text-align: left; }
+.closing strong { color: var(--ink); font-size: 14px; }
+
+blockquote {
+  margin: 10px 0;
+  padding: 2px 0 2px 14px;
+  border-left: 3px solid var(--rule);
+  color: var(--muted);
+  font-style: italic;
+}
+hr { border: none; border-top: 1px solid var(--rule); margin: 16px 0; }
+
+/* Tables */
+td, th, td code { overflow-wrap: anywhere; }
+table { width: 100%; border-collapse: collapse; font-size: 11.5px; margin: 10px 0; font-variant-numeric: tabular-nums; }
+caption { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-align: left; margin-bottom: 4px; }
+thead th {
+  text-align: left;
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  border-bottom: 1.5px solid var(--accent);
+  padding: 5px 6px;
+}
+tbody td, tbody th { border-bottom: 1px solid var(--rule); padding: 5px 6px; color: var(--secondary); text-align: left; font-weight: 400; }
+tr { break-inside: avoid; }
+.leads table tbody tr:first-child td,
+.leads table tbody tr:first-child th { background: var(--fill); color: var(--ink); font-weight: 600; }
+
+/* Callout: ::: callout, first bold run becomes the kicker */
+.callout { background: var(--fill); border-left: 3px solid var(--accent); padding: 8px 12px; margin: 12px 0; break-inside: avoid; }
+.callout p:last-child { margin-bottom: 0; }
+.callout p:first-child strong:first-child {
+  display: block;
+  font-size: 10px;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+/* Status and tags (same vocabulary as the secore style) */
+.status-confirmed { font-size: 11px; font-weight: 600; color: var(--accent); }
+.status-confirmed::before { content: "\2713  "; }
+.status-open {
+  font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 999px; padding: .1em .6em;
+}
+.tag-lead, .tag-reserve {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  padding: .15em .6em; border-radius: 999px;
+}
+.tag-lead { background: var(--accent); color: #fff; }
+.tag-reserve { color: var(--accent); border: 1px solid var(--accent); }
+
+/* Images and mermaid diagrams */
+.mermaid-diagram { margin: 14px 0; text-align: center; break-inside: avoid; }
+.mermaid-diagram img { max-width: 100%; max-height: 17cm; object-fit: contain; }
+img { max-width: 100%; max-height: 11cm; height: auto; object-fit: contain; display: block; margin: 12px auto; }
+p > img:only-child { break-inside: avoid; }
+
+code, pre { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 11.5px; }
+p code, li code { background: var(--fill); padding: 0 3px; border-radius: 2px; }
+pre { background: var(--fill); border-left: 3px solid var(--rule); padding: 8px 12px; overflow-wrap: anywhere; white-space: pre-wrap; }

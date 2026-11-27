@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="$if(lang)$$lang$$else$en$endif$">
+<head>
+<meta charset="utf-8" />
+<title>$pagetitle$</title>
+$for(css)$
+<link rel="stylesheet" href="$css$" />
+$endfor$
+</head>
+<body>
+<header class="masthead">
+  <h1 class="name">$if(name)$$name$$else$Fabio Marchianò, <span class="acc">PhD</span>$endif$</h1>
+  <div class="role">$if(role)$$role$$else$Senior Bioinformatics Scientist / Engineer$endif$</div>
+  <div class="contact">
+$if(contact)$
+$for(contact)$<span>$contact$</span>$endfor$
+$else$
+<span>linkedin.com/in/fmarchiano</span><span>github.com/fmarchiano</span><span>fmarchiano.github.io/aboutme</span>
+$endif$
+  </div>
+</header>
+$if(recipient)$
+<div class="letterhead">
+  <div class="recipient">$for(recipient)$$recipient$$sep$<br />$endfor$</div>
+  $if(date)$<div class="date">$date$</div>$endif$
+</div>
+$elseif(date)$
+<div class="letterhead"><div></div><div class="date">$date$</div></div>
+$endif$
+$if(title)$<h1 class="doc-title">$title$</h1>$endif$
+$if(subject)$<div class="subject">$subject$</div>$endif$
+$if(meta)$
+<dl class="meta">
+$for(meta)$
+  <dt>$meta.key$</dt><dd>$meta.value$</dd>
+$endfor$
+</dl>
+$endif$
+$body$
+</body>
+</html>
